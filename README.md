@@ -2,13 +2,15 @@
 
 > **Work in progress** -- this project is under active development.
 
-REST API for a car dealership built with Fastify and TypeScript.
+REST API for a car dealership built with Fastify, TypeScript, and SQLite.
 
 ## Tech Stack
 
 - **Runtime:** Node.js 22
 - **Framework:** Fastify 5
 - **Language:** TypeScript 5
+- **Database:** SQLite (via better-sqlite3)
+- **ORM:** Drizzle ORM
 
 ## Getting Started
 
@@ -17,7 +19,7 @@ pnpm install
 pnpm dev
 ```
 
-The server starts at `http://localhost:3000`.
+The server starts at `http://localhost:3000`. On first run, the database is created at `./data/dealership.db` and seeded with 100 sample cars.
 
 ## Endpoints
 
@@ -26,6 +28,7 @@ The server starts at `http://localhost:3000`.
 | GET    | /health     | Health check         |
 | GET    | /cars       | List cars (paginated)|
 | GET    | /cars/:id   | Get car by ID        |
+| GET    | /leads      | List all leads       |
 | POST   | /leads      | Create a new lead    |
 
 ### Query Parameters for `GET /cars`
@@ -77,10 +80,44 @@ curl -X POST http://localhost:3000/leads \
   }'
 ```
 
+## Architecture
+
+Each feature is organized as a **module** with four layers. Requests flow top-down through the stack:
+
+```
+Route  -->  Handler  -->  Service  -->  Database
+```
+
+- **Route** -- defines the HTTP method, path, and validation schema. No logic.
+- **Handler** -- reads the request, calls the service, and writes the response.
+- **Service** -- contains business logic and database queries. The only layer that talks to Drizzle/SQLite.
+- **Schema** -- JSON schemas used by Fastify for request validation and response serialization.
+
+Adding a new feature means creating a new module folder under `src/modules/` with these four files, then registering the routes in `app.ts`.
+
+## Project Structure
+
+```
+src/
+  config/          # Environment configuration
+  data/            # Seed data (cars.json)
+  db/              # Database connection, schema, migrations
+  models/          # TypeScript interfaces
+  modules/
+    car/           # Car module (routes, handlers, service, schemas)
+    lead/          # Lead module (routes, handlers, service, schemas)
+  plugins/         # Fastify plugins (CORS)
+  routes/          # Standalone routes (health)
+drizzle/           # SQL migration files
+```
+
 ## Scripts
 
-| Command       | Description                |
-|---------------|----------------------------|
-| `pnpm dev`    | Start dev server (hot reload) |
-| `pnpm build`  | Compile TypeScript         |
-| `pnpm start`  | Run production build       |
+| Command            | Description                     |
+|--------------------|---------------------------------|
+| `pnpm dev`         | Start dev server (hot reload)   |
+| `pnpm build`       | Compile TypeScript              |
+| `pnpm start`       | Run production build            |
+| `pnpm db:generate` | Generate migrations from schema |
+| `pnpm db:migrate`  | Run pending migrations          |
+| `pnpm db:studio`   | Open Drizzle Studio (browse DB) |
