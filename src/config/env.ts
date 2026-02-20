@@ -11,6 +11,10 @@ const schema = {
       type: "string" as const,
       default: "development",
     },
+    DATABASE_URL: {
+      type: "string" as const,
+      default: "./data/dealership.db",
+    },
   },
 };
 
@@ -20,6 +24,7 @@ declare module "fastify" {
       PORT: number;
       HOST: string;
       NODE_ENV: string;
+      DATABASE_URL: string;
     };
   }
 }

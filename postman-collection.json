@@ -1,0 +1,98 @@
+{
+  "info": {
+    "name": "Car Dealership API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cars",
+      "item": [
+        {
+          "name": "List Cars",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/cars?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["cars"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "make", "value": "", "disabled": true },
+                { "key": "model", "value": "", "disabled": true },
+                { "key": "minPrice", "value": "", "disabled": true },
+                { "key": "maxPrice", "value": "", "disabled": true },
+                { "key": "minYear", "value": "", "disabled": true },
+                { "key": "maxYear", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "", "disabled": true },
+                { "key": "order", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Cars (Filtered Example)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/cars?make=Toyota&sortBy=price&order=desc&page=1&limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["cars"],
+              "query": [
+                { "key": "make", "value": "Toyota" },
+                { "key": "sortBy", "value": "price" },
+                { "key": "order", "value": "desc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Car by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cars/1", "host": ["{{baseUrl}}"], "path": ["cars", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Create Lead",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/leads", "host": ["{{baseUrl}}"], "path": ["leads"] },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"carId\": \"1\",\n  \"type\": \"TEST_DRIVE\",\n  \"name\": \"Nuno\",\n  \"email\": \"nuno@mail.com\",\n  \"phone\": \"+49123456789\",\n  \"preferredDate\": \"2026-03-01\",\n  \"message\": \"Can I test drive Saturday?\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

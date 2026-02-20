@@ -1,50 +1,74 @@
-import type { Car, CarQuery, PaginatedResult } from "../../models/car.js";
-import carsData from "../../data/cars.json" with { type: "json" };
+import { eq, like, gte, lte, and, asc, desc, count, type SQL } from "drizzle-orm";
+import type { CarQuery, PaginatedResult } from "../../models/car.js";
+import { getDb } from "../../db/index.js";
+import { cars } from "../../db/schema.js";
 
-const cars: Car[] = carsData;
+type Car = typeof cars.$inferSelect;
 
 export async function getAll(query: CarQuery): Promise<PaginatedResult<Car>> {
-  let result = cars;
+  const db = getDb();
+  const filters = buildFilters(query);
 
-  result = applyFilters(result, query);
-  result = applySort(result, query);
+  const [{ total }] = db
+    .select({ total: count() })
+    .from(cars)
+    .where(filters)
+    .all();
 
-  return paginate(result, query);
+  const page = query.page ?? 1;
+  const limit = query.limit ?? 10;
+  const totalPages = Math.ceil(total / limit);
+  const offset = (page - 1) * limit;
+
+  const orderBy = buildOrderBy(query);
+
+  const data = db
+    .select()
+    .from(cars)
+    .where(filters)
+    .orderBy(orderBy)
+    .limit(limit)
+    .offset(offset)
+    .all();
+
+  return { data, total, page, limit, totalPages };
 }
 
 export async function getById(id: string): Promise<Car | undefined> {
-  return cars.find((car) => car.id === id);
+  const db = getDb();
+  return db.select().from(cars).where(eq(cars.id, id)).get();
 }
 
-function applyFilters(cars: Car[], query: CarQuery): Car[] {
-  return cars.filter((car) => {
-    if (query.make && car.make.toLowerCase() !== query.make.toLowerCase())
-      return false;
-    if (query.model && car.model.toLowerCase() !== query.model.toLowerCase())
-      return false;
-    if (query.minPrice != null && car.price < query.minPrice) return false;
-    if (query.maxPrice != null && car.price > query.maxPrice) return false;
-    if (query.minYear != null && car.year < query.minYear) return false;
-    if (query.maxYear != null && car.year > query.maxYear) return false;
-    return true;
-  });
+function buildFilters(query: CarQuery): SQL | undefined {
+  const conditions: SQL[] = [];
+
+  if (query.make) {
+    conditions.push(like(cars.make, query.make));
+  }
+  if (query.model) {
+    conditions.push(like(cars.model, query.model));
+  }
+  if (query.minPrice != null) {
+    conditions.push(gte(cars.price, query.minPrice));
+  }
+  if (query.maxPrice != null) {
+    conditions.push(lte(cars.price, query.maxPrice));
+  }
+  if (query.minYear != null) {
+    conditions.push(gte(cars.year, query.minYear));
+  }
+  if (query.maxYear != null) {
+    conditions.push(lte(cars.year, query.maxYear));
+  }
+
+  if (conditions.length === 0) return undefined;
+
+  return and(...conditions);
 }
 
-function applySort(cars: Car[], query: CarQuery): Car[] {
-  if (!query.sortBy) return cars;
+function buildOrderBy(query: CarQuery) {
+  if (!query.sortBy) return asc(cars.id);
 
-  const direction = query.order === "desc" ? -1 : 1;
-
-  return [...cars].sort((a, b) => (a[query.sortBy!] - b[query.sortBy!]) * direction);
-}
-
-function paginate(cars: Car[], query: CarQuery): PaginatedResult<Car> {
-  const page = query.page ?? 1;
-  const limit = query.limit ?? 10;
-  const total = cars.length;
-  const totalPages = Math.ceil(total / limit);
-  const start = (page - 1) * limit;
-  const data = cars.slice(start, start + limit);
-
-  return { data, total, page, limit, totalPages };
+  const column = cars[query.sortBy];
+  return query.order === "desc" ? desc(column) : asc(column);
 }
