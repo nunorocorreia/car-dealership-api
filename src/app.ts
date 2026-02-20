@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { registerEnv } from "./config/env.js";
 import { registerCors } from "./plugins/cors.js";
+import { registerSwagger } from "./plugins/swagger.js";
 import { initDb } from "./db/index.js";
 import { healthRoutes } from "./routes/health.js";
 import { carRoutes } from "./modules/car/car.routes.js";
@@ -18,6 +19,7 @@ export async function buildApp() {
 
   await registerEnv(app);
   await registerCors(app);
+  await registerSwagger(app);
 
   initDb(app.config.DATABASE_URL);
   app.log.info(`Database initialized at ${app.config.DATABASE_URL}`);

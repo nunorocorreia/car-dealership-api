@@ -39,6 +39,9 @@ const getAllQuerystring = {
 };
 
 export const getAllSchema = {
+  tags: ["Cars"],
+  summary: "List cars",
+  description: "Browse car inventory with pagination, filtering, and sorting",
   querystring: getAllQuerystring,
   response: {
     200: paginatedCarsSchema,
@@ -46,6 +49,9 @@ export const getAllSchema = {
 };
 
 export const getByIdSchema = {
+  tags: ["Cars"],
+  summary: "Get car by ID",
+  description: "Retrieve full details of a single car",
   params: {
     type: "object" as const,
     required: ["id"] as const,

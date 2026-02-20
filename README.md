@@ -11,6 +11,7 @@ REST API for a car dealership built with Fastify, TypeScript, and SQLite.
 - **Language:** TypeScript 5
 - **Database:** SQLite (via better-sqlite3)
 - **ORM:** Drizzle ORM
+- **Docs:** Swagger / OpenAPI 3.0 (at `/docs`)
 
 ## Getting Started
 
@@ -21,6 +22,8 @@ pnpm dev
 
 The server starts at `http://localhost:3000`. On first run, the database is created at `./data/dealership.db` and seeded with 100 sample cars.
 
+API docs are available at `http://localhost:3000/docs`.
+
 ## Endpoints
 
 | Method | Path        | Description          |
@@ -30,6 +33,7 @@ The server starts at `http://localhost:3000`. On first run, the database is crea
 | GET    | /cars/:id   | Get car by ID        |
 | GET    | /leads      | List all leads       |
 | POST   | /leads      | Create a new lead    |
+| GET    | /docs       | Swagger UI           |
 
 ### Query Parameters for `GET /cars`
 
@@ -106,7 +110,7 @@ src/
   modules/
     car/           # Car module (routes, handlers, service, schemas)
     lead/          # Lead module (routes, handlers, service, schemas)
-  plugins/         # Fastify plugins (CORS)
+  plugins/         # Fastify plugins (CORS, Swagger)
   routes/          # Standalone routes (health)
 drizzle/           # SQL migration files
 ```

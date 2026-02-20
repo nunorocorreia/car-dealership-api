@@ -22,6 +22,9 @@ const errorSchema = {
 };
 
 export const getAllLeadsSchema = {
+  tags: ["Leads"],
+  summary: "List leads",
+  description: "Retrieve all customer leads",
   response: {
     200: {
       type: "array" as const,
@@ -31,6 +34,9 @@ export const getAllLeadsSchema = {
 };
 
 export const createLeadSchema = {
+  tags: ["Leads"],
+  summary: "Create lead",
+  description: "Submit a new customer lead (test drive, inquiry, or purchase)",
   body: {
     type: "object" as const,
     required: ["carId", "type", "name", "email", "phone", "preferredDate"] as const,
