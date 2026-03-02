@@ -1,3 +1,6 @@
+export const CAR_STATUSES = ["AVAILABLE", "RESERVED", "SOLD"] as const;
+export type CarStatus = (typeof CAR_STATUSES)[number];
+
 export interface Car {
   id: string;
   make: string;
@@ -6,6 +9,7 @@ export interface Car {
   price: number;
   mileage: number;
   color: string;
+  status: CarStatus;
 }
 
 export interface CarQuery {
@@ -19,6 +23,7 @@ export interface CarQuery {
   maxYear?: number;
   sortBy?: "price" | "year" | "mileage";
   order?: "asc" | "desc";
+  status?: CarStatus;
 }
 
 export interface PaginatedResult<T> {

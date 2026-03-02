@@ -8,6 +8,22 @@ export const cars = sqliteTable("cars", {
   price: integer("price").notNull(),
   mileage: integer("mileage").notNull(),
   color: text("color").notNull(),
+  status: text("status", { enum: ["AVAILABLE", "RESERVED", "SOLD"] })
+    .notNull()
+    .default("AVAILABLE"),
+});
+
+export const sales = sqliteTable("sales", {
+  id: text("id").primaryKey(),
+  carId: text("car_id")
+    .notNull()
+    .references(() => cars.id),
+  leadId: text("lead_id").references(() => leads.id),
+  buyerName: text("buyer_name").notNull(),
+  buyerEmail: text("buyer_email").notNull(),
+  buyerPhone: text("buyer_phone").notNull(),
+  salePrice: integer("sale_price").notNull(),
+  soldAt: text("sold_at").notNull(),
 });
 
 export const leads = sqliteTable("leads", {

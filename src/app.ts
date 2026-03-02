@@ -6,6 +6,7 @@ import { initDb } from "./db/index.js";
 import { healthRoutes } from "./routes/health.js";
 import { carRoutes } from "./modules/car/car.routes.js";
 import { leadRoutes } from "./modules/lead/lead.routes.js";
+import { saleRoutes } from "./modules/sale/sale.routes.js";
 
 export async function buildApp() {
   const app = Fastify({
@@ -27,6 +28,7 @@ export async function buildApp() {
   await app.register(healthRoutes);
   await app.register(carRoutes);
   await app.register(leadRoutes);
+  await app.register(saleRoutes);
 
   return app;
 }

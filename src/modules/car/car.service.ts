@@ -60,6 +60,9 @@ function buildFilters(query: CarQuery): SQL | undefined {
   if (query.maxYear != null) {
     conditions.push(lte(cars.year, query.maxYear));
   }
+  if (query.status) {
+    conditions.push(eq(cars.status, query.status));
+  }
 
   if (conditions.length === 0) return undefined;
 

@@ -33,6 +33,23 @@ export const getAllLeadsSchema = {
   },
 };
 
+export const getLeadByIdSchema = {
+  tags: ["Leads"],
+  summary: "Get lead by ID",
+  description: "Retrieve a single lead by its ID",
+  params: {
+    type: "object" as const,
+    required: ["id"] as const,
+    properties: {
+      id: { type: "string" as const },
+    },
+  },
+  response: {
+    200: leadSchema,
+    404: errorSchema,
+  },
+};
+
 export const createLeadSchema = {
   tags: ["Leads"],
   summary: "Create lead",

@@ -7,6 +7,19 @@ export async function getAllLeads() {
   return leadService.getAll();
 }
 
+export async function getLeadById(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply,
+) {
+  const lead = await leadService.getById(request.params.id);
+
+  if (!lead) {
+    return reply.code(404).send({ message: "Lead not found" });
+  }
+
+  return lead;
+}
+
 export async function createLead(
   request: FastifyRequest<{ Body: CreateLeadInput }>,
   reply: FastifyReply,

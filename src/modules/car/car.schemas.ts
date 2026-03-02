@@ -8,6 +8,10 @@ export const carSchema = {
     price: { type: "number" as const },
     mileage: { type: "number" as const },
     color: { type: "string" as const },
+    status: {
+      type: "string" as const,
+      enum: ["AVAILABLE", "RESERVED", "SOLD"],
+    },
   },
 };
 
@@ -35,6 +39,11 @@ const getAllQuerystring = {
     maxYear: { type: "number" as const },
     sortBy: { type: "string" as const, enum: ["price", "year", "mileage"] },
     order: { type: "string" as const, enum: ["asc", "desc"], default: "asc" },
+    status: {
+      type: "string" as const,
+      enum: ["AVAILABLE", "RESERVED", "SOLD"],
+      default: "AVAILABLE",
+    },
   },
 };
 

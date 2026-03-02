@@ -12,6 +12,11 @@ export async function getAll(): Promise<Lead[]> {
   return db.select().from(leads).all();
 }
 
+export async function getById(id: string): Promise<Lead | undefined> {
+  const db = getDb();
+  return db.select().from(leads).where(eq(leads.id, id)).get();
+}
+
 export async function create(input: CreateLeadInput): Promise<Lead> {
   const car = await carService.getById(input.carId);
   if (!car) {
