@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 
 export const cars = sqliteTable("cars", {
   id: text("id").primaryKey(),
@@ -25,6 +25,25 @@ export const sales = sqliteTable("sales", {
   salePrice: integer("sale_price").notNull(),
   soldAt: text("sold_at").notNull(),
 });
+
+export const carImages = sqliteTable(
+  "car_images",
+  {
+    id: text("id").primaryKey(),
+    carId: text("car_id")
+      .notNull()
+      .references(() => cars.id, { onDelete: "cascade" }),
+    filename: text("filename").notNull(),
+    originalName: text("original_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    size: integer("size").notNull(),
+    isPrimary: integer("is_primary", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [index("car_images_car_id_idx").on(table.carId)],
+);
 
 export const leads = sqliteTable("leads", {
   id: text("id").primaryKey(),

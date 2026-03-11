@@ -1,11 +1,44 @@
 import { eq, like, gte, lte, and, asc, desc, count, type SQL } from "drizzle-orm";
 import type { CarQuery, PaginatedResult } from "../../models/car.js";
 import { getDb } from "../../db/index.js";
-import { cars } from "../../db/schema.js";
+import { cars, carImages } from "../../db/schema.js";
+import type { CarImageResponse } from "../../models/car-image.js";
 
 type Car = typeof cars.$inferSelect;
+type CarWithImages = Car & { images: CarImageResponse[] };
 
-export async function getAll(query: CarQuery): Promise<PaginatedResult<Car>> {
+function toImageResponse(img: typeof carImages.$inferSelect): CarImageResponse {
+  return {
+    ...img,
+    isPrimary: !!img.isPrimary,
+    url: `/uploads/cars/${img.filename}`,
+  };
+}
+
+function attachImages(db: ReturnType<typeof getDb>, carList: Car[]): CarWithImages[] {
+  if (carList.length === 0) return [];
+
+  const carIds = carList.map((c) => c.id);
+  const allImages = db
+    .select()
+    .from(carImages)
+    .all()
+    .filter((img) => carIds.includes(img.carId));
+
+  const imagesByCarId = new Map<string, CarImageResponse[]>();
+  for (const img of allImages) {
+    const list = imagesByCarId.get(img.carId) ?? [];
+    list.push(toImageResponse(img));
+    imagesByCarId.set(img.carId, list);
+  }
+
+  return carList.map((car) => ({
+    ...car,
+    images: imagesByCarId.get(car.id) ?? [],
+  }));
+}
+
+export async function getAll(query: CarQuery): Promise<PaginatedResult<CarWithImages>> {
   const db = getDb();
   const filters = buildFilters(query);
 
@@ -31,12 +64,14 @@ export async function getAll(query: CarQuery): Promise<PaginatedResult<Car>> {
     .offset(offset)
     .all();
 
-  return { data, total, page, limit, totalPages };
+  return { data: attachImages(db, data), total, page, limit, totalPages };
 }
 
-export async function getById(id: string): Promise<Car | undefined> {
+export async function getById(id: string): Promise<CarWithImages | undefined> {
   const db = getDb();
-  return db.select().from(cars).where(eq(cars.id, id)).get();
+  const car = db.select().from(cars).where(eq(cars.id, id)).get();
+  if (!car) return undefined;
+  return attachImages(db, [car])[0];
 }
 
 function buildFilters(query: CarQuery): SQL | undefined {

@@ -14,6 +14,7 @@ export async function registerSwagger(app: FastifyInstance) {
         { name: "Cars", description: "Browse car inventory" },
         { name: "Leads", description: "Customer lead management" },
         { name: "Sales", description: "Sale transactions and history" },
+        { name: "Dashboard", description: "Aggregated stats and metrics" },
         { name: "Health", description: "Service health checks" },
       ],
     },

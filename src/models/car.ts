@@ -10,6 +10,13 @@ export interface Car {
   mileage: number;
   color: string;
   status: CarStatus;
+  images?: CarImage[];
+}
+
+export interface CarImage {
+  id: string;
+  url: string;
+  isPrimary: boolean;
 }
 
 export interface CarQuery {

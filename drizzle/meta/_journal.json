@@ -15,6 +15,13 @@
       "when": 1771612130607,
       "tag": "0001_soft_human_fly",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1773248747449,
+      "tag": "0002_tiresome_daimon_hellstrom",
+      "breakpoints": true
     }
   ]
 }

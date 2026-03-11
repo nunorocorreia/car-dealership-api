@@ -1,3 +1,18 @@
+const carImageSchema = {
+  type: "object" as const,
+  properties: {
+    id: { type: "string" as const },
+    carId: { type: "string" as const },
+    filename: { type: "string" as const },
+    originalName: { type: "string" as const },
+    mimeType: { type: "string" as const },
+    size: { type: "number" as const },
+    isPrimary: { type: "boolean" as const },
+    createdAt: { type: "string" as const },
+    url: { type: "string" as const },
+  },
+};
+
 export const carSchema = {
   type: "object" as const,
   properties: {
@@ -12,6 +27,7 @@ export const carSchema = {
       type: "string" as const,
       enum: ["AVAILABLE", "RESERVED", "SOLD"],
     },
+    images: { type: "array" as const, items: carImageSchema },
   },
 };
 
