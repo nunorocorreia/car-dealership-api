@@ -11,6 +11,7 @@ export const cars = sqliteTable("cars", {
   status: text("status", { enum: ["AVAILABLE", "RESERVED", "SOLD"] })
     .notNull()
     .default("AVAILABLE"),
+  discountAmount: integer("discount_amount"),
 });
 
 export const sales = sqliteTable("sales", {
@@ -44,6 +45,19 @@ export const carImages = sqliteTable(
   },
   (table) => [index("car_images_car_id_idx").on(table.carId)],
 );
+
+export const discountRules = sqliteTable("discount_rules", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  amount: integer("amount").notNull(),
+  minYear: integer("min_year"),
+  maxYear: integer("max_year"),
+  make: text("make"),
+  minPrice: integer("min_price"),
+  maxPrice: integer("max_price"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: text("created_at").notNull(),
+});
 
 export const leads = sqliteTable("leads", {
   id: text("id").primaryKey(),

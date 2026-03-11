@@ -1,5 +1,10 @@
-export const CAR_STATUSES = ["AVAILABLE", "RESERVED", "SOLD"] as const;
-export type CarStatus = (typeof CAR_STATUSES)[number];
+export type CarStatus = "AVAILABLE" | "RESERVED" | "SOLD";
+
+export interface CarImage {
+  id: string;
+  url: string;
+  isPrimary: boolean;
+}
 
 export interface Car {
   id: string;
@@ -10,15 +15,9 @@ export interface Car {
   mileage: number;
   color: string;
   status: CarStatus;
-  images?: CarImage[];
+  images: CarImage[];
   discountAmount: number;
   discountedPrice: number;
-}
-
-export interface CarImage {
-  id: string;
-  url: string;
-  isPrimary: boolean;
 }
 
 export interface CarQuery {

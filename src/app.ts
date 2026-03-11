@@ -11,6 +11,7 @@ import { carRoutes } from "./modules/car/car.routes.js";
 import { leadRoutes } from "./modules/lead/lead.routes.js";
 import { saleRoutes } from "./modules/sale/sale.routes.js";
 import { statsRoutes } from "./modules/stats/stats.routes.js";
+import { discountRoutes } from "./modules/discount/discount.routes.js";
 
 export async function buildApp() {
   const app = Fastify({
@@ -44,6 +45,7 @@ export async function buildApp() {
   await app.register(leadRoutes);
   await app.register(saleRoutes);
   await app.register(statsRoutes);
+  await app.register(discountRoutes);
 
   return app;
 }

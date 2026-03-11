@@ -28,6 +28,8 @@ export const carSchema = {
       enum: ["AVAILABLE", "RESERVED", "SOLD"],
     },
     images: { type: "array" as const, items: carImageSchema },
+    discountAmount: { type: "number" as const },
+    discountedPrice: { type: "number" as const },
   },
 };
 

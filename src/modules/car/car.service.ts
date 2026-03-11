@@ -3,9 +3,11 @@ import type { CarQuery, PaginatedResult } from "../../models/car.js";
 import { getDb } from "../../db/index.js";
 import { cars, carImages } from "../../db/schema.js";
 import type { CarImageResponse } from "../../models/car-image.js";
+import { computeDiscount } from "../discount/discount.service.js";
 
 type Car = typeof cars.$inferSelect;
 type CarWithImages = Car & { images: CarImageResponse[] };
+type CarWithDiscount = CarWithImages & { discountAmount: number; discountedPrice: number };
 
 function toImageResponse(img: typeof carImages.$inferSelect): CarImageResponse {
   return {
@@ -64,14 +66,19 @@ export async function getAll(query: CarQuery): Promise<PaginatedResult<CarWithIm
     .offset(offset)
     .all();
 
-  return { data: attachImages(db, data), total, page, limit, totalPages };
+  const carsWithImages = attachImages(db, data);
+  return { data: applyDiscounts(carsWithImages), total, page, limit, totalPages };
 }
 
-export async function getById(id: string): Promise<CarWithImages | undefined> {
+export async function getById(id: string): Promise<CarWithDiscount | undefined> {
   const db = getDb();
   const car = db.select().from(cars).where(eq(cars.id, id)).get();
   if (!car) return undefined;
-  return attachImages(db, [car])[0];
+  return applyDiscounts(attachImages(db, [car]))[0];
+}
+
+function applyDiscounts(carList: CarWithImages[]): CarWithDiscount[] {
+  return carList.map((car) => ({ ...car, ...computeDiscount(car) }));
 }
 
 function buildFilters(query: CarQuery): SQL | undefined {
